@@ -1,8 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import { useAuth } from '@workos-inc/authkit-react';
-
 import { useState, useCallback } from 'react';
+import { useAuth } from '@workos-inc/authkit-react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
