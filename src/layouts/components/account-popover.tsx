@@ -1,5 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
+import { useAuth } from '@workos-inc/authkit-react';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -31,6 +33,8 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   const router = useRouter();
 
   const pathname = usePathname();
+
+  const { signOut } = useAuth();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -129,8 +133,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
-            Logout
+          <Button  
+            onClick={() => {signOut();}}
+            fullWidth 
+            color="error" 
+            size="medium" 
+            variant="text">
+          Logout
           </Button>
         </Box>
       </Popover>

@@ -1,63 +1,28 @@
 import { useState, useCallback } from 'react';
-
+import { useAuth } from '@workos-inc/authkit-react';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
+
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import InputAdornment from '@mui/material/InputAdornment';
-
-import { useRouter } from 'src/routes/hooks';
-
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export function SignInView() {
-  const router = useRouter();
+  const { isLoading,  signIn } = useAuth();
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
+  const handleSignIn = useCallback(async () => {
+    try {
+      // Redirige al usuario a la página de inicio de sesión 
+      await signIn();
+    } catch (error) {
+      console.error('Error durante el inicio de sesión:', error);
+    }
+  }, [signIn]); // Agrega location.pathname como dependencia
 
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
-      <TextField
-        fullWidth
-        name="email"
-        label="Email address"
-        defaultValue="hello@gmail.com"
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 3 }}
-      />
-
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link>
-
-      <TextField
-        fullWidth
-        name="password"
-        label="Password"
-        defaultValue="@demo1234"
-        InputLabelProps={{ shrink: true }}
-        type={showPassword ? 'text' : 'password'}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        sx={{ mb: 3 }}
-      />
-
       <LoadingButton
         fullWidth
         size="large"
@@ -65,6 +30,7 @@ export function SignInView() {
         color="inherit"
         variant="contained"
         onClick={handleSignIn}
+        loading={isLoading} // Muestra un indicador de carga si está cargando
       >
         Sign in
       </LoadingButton>
@@ -82,9 +48,7 @@ export function SignInView() {
           </Link>
         </Typography>
       </Box>
-
       {renderForm}
-
       <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
         <Typography
           variant="overline"
@@ -93,7 +57,6 @@ export function SignInView() {
           OR
         </Typography>
       </Divider>
-
       <Box gap={1} display="flex" justifyContent="center">
         <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
