@@ -58,6 +58,11 @@ export function Router() {
         { path: 'blog', element: <BlogPage /> },
       ],
     },
+
+    // --- AGREGA ESTA LÍNEA AQUÍ ---
+    { path: 'api/*', element: null }, 
+    // ------------------------------
+
     { path: '404', element: <Page404 /> },
     { path: '*', element: <Navigate to="/404" replace /> },
   ]);

@@ -33,6 +33,7 @@
     "@iconify/react": "^5.0.2",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
+    "@workos-inc/authkit-nextjs": "^2.14.0",
     "@workos-inc/authkit-react": "^0.9.0",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.9",

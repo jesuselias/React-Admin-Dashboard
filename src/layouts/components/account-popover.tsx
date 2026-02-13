@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useAuth } from '@workos-inc/authkit-react';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
@@ -52,6 +52,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     },
     [handleClosePopover, router]
   );
+
+  const handleSignOut = useCallback(async () => {
+  const origin = window.location.origin; // Detecta si es localhost o Vercel
+  await signOut({
+    returnTo: `${origin}/sign-in`, // Redirige dinámicamente según el entorno
+  });
+}, [signOut]);
 
   return (
     <>
@@ -132,14 +139,14 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button  
-            onClick={() => {signOut();}}
+          <LoadingButton  
+              onClick={handleSignOut}
             fullWidth 
             color="error" 
             size="medium" 
             variant="text">
           Logout
-          </Button>
+          </LoadingButton>
         </Box>
       </Popover>
     </>
