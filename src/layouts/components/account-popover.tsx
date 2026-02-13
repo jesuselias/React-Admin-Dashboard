@@ -62,6 +62,8 @@ const handleSignOut = useCallback(async () => {
       const payload = jose.decodeJwt(token);
       const sid = payload.sid as string;
 
+      console.log("sid",sid)
+
       // Determinamos qué backend usar
       const BACKEND_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001' 
