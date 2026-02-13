@@ -55,6 +55,8 @@ app.get("/api/stocks", (req, res) => {
 // --- RUTA DE LOGOUT SIGUIENDO LA DOC ---
 app.get("/api/auth/logout", (req, res) => {
   const { sessionId } = req.query;
+
+  console.log("sessionId", sessionId)
   
   // Si no hay origin, miramos el referer o usamos la lógica de NODE_ENV
   const origin = req.headers.origin || 
@@ -62,6 +64,8 @@ app.get("/api/auth/logout", (req, res) => {
                  (process.env.NODE_ENV === 'production' 
                     ? 'https://material-kit-react-psi.vercel.app' 
                     : 'http://localhost:3039');
+
+  console.log("origin", origin)
 
   try {
     const logoutUrl = workos.userManagement.getLogoutUrl({
