@@ -62,15 +62,14 @@ const handleSignOut = useCallback(async () => {
       const payload = jose.decodeJwt(token);
       const sid = payload.sid as string;
 
-      // Paso final: Navegación al backend
-      window.location.href = `http://localhost:3001/api/auth/logout?sessionId=${sid}`;
-    } else {
-      // Si no hay token, simplemente lo mandamos al login local
-      window.location.href = '/sign-in';
+      // Determinamos qué backend usar
+      const BACKEND_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001' 
+        : 'https://tu-backend-en-render-o-railway.com'; // <--- Tu URL de backend real
+
+      window.location.href = `${BACKEND_URL}/api/auth/logout?sessionId=${sid}`;
     }
   } catch (error) {
-    console.error("Error en el flujo de logout:", error);
-    // Si falla el fetch del token, forzamos salida
     window.location.href = '/sign-in';
   }
 }, [getAccessToken]);

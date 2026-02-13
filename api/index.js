@@ -55,23 +55,23 @@ app.get("/api/stocks", (req, res) => {
 // --- RUTA DE LOGOUT SIGUIENDO LA DOC ---
 app.get("/api/auth/logout", (req, res) => {
   const { sessionId } = req.query;
-
-  if (!sessionId) {
-    console.log("⚠️ No se recibió sessionId, redirigiendo a login local.");
-    return res.redirect("http://localhost:3039/sign-in");
-  }
+  
+  // Si no hay origin, miramos el referer o usamos la lógica de NODE_ENV
+  const origin = req.headers.origin || 
+                 (req.headers.referer ? new URL(req.headers.referer).origin : null) ||
+                 (process.env.NODE_ENV === 'production' 
+                    ? 'https://material-kit-react-psi.vercel.app' 
+                    : 'http://localhost:3039');
 
   try {
-    // IMPLEMENTACIÓN OFICIAL SEGÚN LA DOC QUE ME PASASTE
     const logoutUrl = workos.userManagement.getLogoutUrl({
       sessionId: sessionId,
-      returnTo: 'http://localhost:3039/sign-in', 
+      returnTo: `${origin}/sign-in`, 
     });
 
     res.redirect(logoutUrl);
   } catch (error) {
-    console.error("❌ Error generando URL de logout:", error);
-    res.redirect("http://localhost:3039/sign-in");
+    res.redirect(`${origin}/sign-in`);
   }
 });
 
