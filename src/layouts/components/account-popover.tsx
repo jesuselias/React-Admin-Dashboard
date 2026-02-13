@@ -62,16 +62,25 @@ const handleSignOut = useCallback(async () => {
       const payload = jose.decodeJwt(token);
       const sid = payload.sid as string;
 
-      console.log("sid",sid)
+      console.log("sid", sid);
+
 
       // Determinamos qué backend usar
       const BACKEND_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001' 
-        : 'https://tu-backend-en-render-o-railway.com'; // <--- Tu URL de backend real
+        : 'https://material-kit-react-psi.vercel.app'; 
 
-      window.location.href = `${BACKEND_URL}/api/auth/logout?sessionId=${sid}`;
+      const logoutUrl = `${BACKEND_URL}/api/auth/logout?sessionId=${sid}`;
+      
+      console.log("Redirigiendo a:", logoutUrl);
+
+      // Usamos redirección total para limpiar las cookies de WorkOS
+      window.location.href = logoutUrl;
+    } else {
+      window.location.href = '/sign-in';
     }
   } catch (error) {
+    console.error("Error al cerrar sesión:", error);
     window.location.href = '/sign-in';
   }
 }, [getAccessToken]);
