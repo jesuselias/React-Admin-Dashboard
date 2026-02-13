@@ -22,6 +22,15 @@ export function SignInView() {
     }
   }, [signIn]); // Agrega location.pathname como dependencia
 
+//   const handleSignIn = () => {
+//   const baseUrl =
+//     process.env.NODE_ENV === "production"
+//       ? "https://material-kit-react-psi.vercel.app"
+//       : "http://localhost:3001";
+
+//   window.location.href = `${baseUrl}/api/auth/signin`;
+// };
+
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
       <LoadingButton

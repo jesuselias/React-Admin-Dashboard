@@ -1,11 +1,19 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
+const { WorkOS } = require("@workos-inc/node");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Inicializar WorkOS
+const workos = new WorkOS(process.env.WORKOS_API_KEY);
+
 // Middleware para habilitar CORS
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3039', 'https://material-kit-react-psi.vercel.app'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -28,6 +36,43 @@ const appleStockData = [
 // Ruta de la API
 app.get("/api/stocks", (req, res) => {
   res.json(appleStockData);
+});
+
+// backend: /api/auth/signin
+// app.get("/api/auth/signin", (req, res) => {
+//   const redirectUri = "http://localhost:3039";
+
+//   // Use workos.userManagement instead of workos.sso
+//   const authUrl = workos.userManagement.getAuthorizationUrl({
+//     provider: 'authkit', // Or your specific provider
+//     redirectUri: redirectUri,
+//     clientId: process.env.WORKOS_CLIENT_ID,
+//   });
+
+//   res.redirect(authUrl); 
+// });
+
+// --- RUTA DE LOGOUT SIGUIENDO LA DOC ---
+app.get("/api/auth/logout", (req, res) => {
+  const { sessionId } = req.query;
+
+  if (!sessionId) {
+    console.log("⚠️ No se recibió sessionId, redirigiendo a login local.");
+    return res.redirect("http://localhost:3039/sign-in");
+  }
+
+  try {
+    // IMPLEMENTACIÓN OFICIAL SEGÚN LA DOC QUE ME PASASTE
+    const logoutUrl = workos.userManagement.getLogoutUrl({
+      sessionId: sessionId,
+      returnTo: 'http://localhost:3039/sign-in', 
+    });
+
+    res.redirect(logoutUrl);
+  } catch (error) {
+    console.error("❌ Error generando URL de logout:", error);
+    res.redirect("http://localhost:3039/sign-in");
+  }
 });
 
 // Iniciar el servidor

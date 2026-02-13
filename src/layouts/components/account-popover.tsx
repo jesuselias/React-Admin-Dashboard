@@ -1,16 +1,17 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
+import * as jose from 'jose';
 import { useState, useCallback } from 'react';
 import { useAuth } from '@workos-inc/authkit-react';
 
 import Box from '@mui/material/Box';
-import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import MenuList from '@mui/material/MenuList';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import LoadingButton from '@mui/lab/LoadingButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
@@ -33,7 +34,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   const pathname = usePathname();
 
-  const { signOut } = useAuth();
+  const { getAccessToken } = useAuth();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -53,12 +54,26 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     [handleClosePopover, router]
   );
 
-  const handleSignOut = useCallback(async () => {
-  const origin = window.location.origin; // Detecta si es localhost o Vercel
-  await signOut({
-    returnTo: `${origin}/sign-in`, // Redirige dinámicamente según el entorno
-  });
-}, [signOut]);
+const handleSignOut = useCallback(async () => {
+  try {
+    const token = await getAccessToken();
+
+    if (token) {
+      const payload = jose.decodeJwt(token);
+      const sid = payload.sid as string;
+
+      // Paso final: Navegación al backend
+      window.location.href = `http://localhost:3001/api/auth/logout?sessionId=${sid}`;
+    } else {
+      // Si no hay token, simplemente lo mandamos al login local
+      window.location.href = '/sign-in';
+    }
+  } catch (error) {
+    console.error("Error en el flujo de logout:", error);
+    // Si falla el fetch del token, forzamos salida
+    window.location.href = '/sign-in';
+  }
+}, [getAccessToken]);
 
   return (
     <>
